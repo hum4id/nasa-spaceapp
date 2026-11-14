@@ -1,0 +1,45 @@
+# One-time per clone:  pip install pre-commit  (or: uv tool install pre-commit)
+#                      pre-commit install
+# Run on everything:   pre-commit run --all-files
+# Python hooks run through uv so they use the exact versions in backend-nasa/uv.lock.
+exclude: ^(\.agents|\.zed|\.cursor)/
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: backend-ruff
+        name: backend ruff
+        entry: uv run --directory backend-nasa --extra dev ruff check --fix .
+        language: system
+        files: ^backend-nasa/.*\.py$
+        pass_filenames: false
+      - id: backend-black
+        name: backend black
+        entry: uv run --directory backend-nasa --extra dev black .
+        language: system
+        files: ^backend-nasa/.*\.py$
+        pass_filenames: false
+      - id: backend-mypy
+        name: backend mypy
+        entry: uv run --directory backend-nasa --extra dev mypy app
+        language: system
+        files: ^backend-nasa/app/.*\.py$
+        pass_filenames: false
+      - id: frontend-eslint
+        name: frontend eslint
+        entry: npm --prefix frontend-nasa run lint
+        language: system
+        files: ^frontend-nasa/.*\.(ts|tsx|js|jsx)$
+        pass_filenames: false

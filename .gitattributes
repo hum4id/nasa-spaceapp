@@ -1,0 +1,29 @@
+# Normalise line endings across Windows/macOS/Linux.
+# After adding this file, run once: git add --renormalize . && git commit -m "chore: normalise line endings"
+* text=auto
+
+# Must be LF to run inside Linux containers / CI
+*.sh        text eol=lf
+Dockerfile* text eol=lf
+*.py        text eol=lf
+*.toml      text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.json      text eol=lf
+*.conf      text eol=lf
+*.lock      text eol=lf
+*.ts        text eol=lf
+*.tsx       text eol=lf
+*.js        text eol=lf
+*.css       text eol=lf
+*.html      text eol=lf
+*.md        text eol=lf
+
+# Binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.zip  binary
+*.tif  binary
+*.nc   binary

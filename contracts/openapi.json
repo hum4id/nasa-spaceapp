@@ -18,7 +18,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HealthResponse"
+                  "$ref": "#/components/schemas/ApiResponse_HealthData_"
                 }
               }
             }
@@ -29,7 +29,86 @@
   },
   "components": {
     "schemas": {
-      "HealthResponse": {
+      "ApiResponse_HealthData_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HealthData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ErrorInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PageMeta"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "ApiResponse[HealthData]"
+      },
+      "ErrorInfo": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Stable machine-readable error code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Human-readable message, safe to show to users"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details",
+            "description": "Field-level validation details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorInfo"
+      },
+      "HealthData": {
         "properties": {
           "status": {
             "type": "string",
@@ -45,7 +124,33 @@
           "status",
           "env"
         ],
-        "title": "HealthResponse"
+        "title": "HealthData"
+      },
+      "PageMeta": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Page"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "limit"
+        ],
+        "title": "PageMeta"
       }
     }
   }

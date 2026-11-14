@@ -25,12 +25,49 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** HealthResponse */
-        HealthResponse: {
+        /** ApiResponse[HealthData] */
+        ApiResponse_HealthData_: {
+            /** Success */
+            success: boolean;
+            data?: components["schemas"]["HealthData"] | null;
+            error?: components["schemas"]["ErrorInfo"] | null;
+            meta?: components["schemas"]["PageMeta"] | null;
+        };
+        /** ErrorInfo */
+        ErrorInfo: {
+            /**
+             * Code
+             * @description Stable machine-readable error code
+             */
+            code: string;
+            /**
+             * Message
+             * @description Human-readable message, safe to show to users
+             */
+            message: string;
+            /**
+             * Details
+             * @description Field-level validation details
+             */
+            details?: {
+                [key: string]: unknown;
+            }[] | null;
+        };
+        /** HealthData */
+        HealthData: {
             /** Status */
             status: string;
             /** Env */
             env: string;
+        };
+        /** PageMeta */
+        PageMeta: {
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Limit */
+            limit: number;
         };
     };
     responses: never;
@@ -56,7 +93,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HealthResponse"];
+                    "application/json": components["schemas"]["ApiResponse_HealthData_"];
                 };
             };
         };

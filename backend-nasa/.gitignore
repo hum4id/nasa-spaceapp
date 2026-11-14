@@ -16,3 +16,4 @@ datasets/**
 models/**
 !models/.gitkeep
 !models/registry.yaml
+evidence/

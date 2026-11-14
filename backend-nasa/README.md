@@ -7,7 +7,7 @@ Kerangka backend dan AI. Belum ada fitur; baru `/health` dan router `/api/v1` ko
 ```
 app/
   main.py          create_app(): CORS dari env, error handler, router
-  core/            config (env), logging (text/JSON), errors, rate_limit
+  core/            config (env), logging (text/JSON), errors, schemas (envelope), rate_limit
   api/router.py    router /api/v1 — daftarkan router fitur di sini
   features/        satu paket per fitur: router.py (tipis), schemas.py, service.py
     health/        GET /health
@@ -66,4 +66,8 @@ di `models/registry.yaml`, dan simpan salinan `configs/experiment.example.yaml` 
 - Endpoint I/O memakai `async def`; komputasi berat dijalankan di threadpool.
 - Router tipis, logika di `service.py` / `app/ai`, schema request dan response terpisah.
 - Tanpa `print()`, pakai `logging`. Rahasia hanya dari env.
+- Format response wajib `ApiResponse` lewat `ok()` (lihat `../docs/adr/0002-response-envelope.md`).
+- Urutan import: ECC menyebut isort; di sini dijalankan oleh ruff (aturan `I`, kompatibel dengan
+  profil black), jadi tidak perlu memasang isort terpisah.
+- Pre-commit: dari root repo jalankan `pre-commit install` sekali.
 - Test dulu (TDD), coverage ≥ 80%.

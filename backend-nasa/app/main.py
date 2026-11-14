@@ -9,7 +9,7 @@ from app.api.router import api_v1
 from app.core.config import Settings, get_settings
 from app.core.errors import register_error_handlers
 from app.core.logging import configure_logging
-from app.core.rate_limit import setup_rate_limit
+from app.core.rate_limit import RateLimitMiddleware
 from app.features.health.router import router as health_router
 
 
@@ -17,7 +17,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
     configure_logging(settings.log_level, settings.log_format)
     app = FastAPI(title="Field Shift API", version="0.1.0")
-    setup_rate_limit(app, settings.rate_limit_default)
+    app.add_middleware(RateLimitMiddleware, limit=settings.rate_limit_default)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,

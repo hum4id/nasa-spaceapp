@@ -1,4 +1,5 @@
 name: frontend-ci
+
 on:
   push:
     branches: [main]
@@ -6,20 +7,51 @@ on:
   pull_request:
     paths: ["frontend-nasa/**", "contracts/**", ".github/workflows/frontend-ci.yml"]
 
+# Least privilege: read-only token for every job.
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend-nasa
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # Third-party actions are pinned to full commit SHAs; the tag is in the comment.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: frontend-nasa/package-lock.json
       - run: npm ci
+      - run: mkdir -p evidence
+
+      - name: Dependency audit (fails on high/critical)
+        run: |
+          npm audit --audit-level=high --json > evidence/npm-audit.json || status=$?
+          npm audit --audit-level=high || true
+          exit ${status:-0}
+      - name: SBOM (CycloneDX)
+        run: npm sbom --sbom-format cyclonedx > evidence/sbom.cdx.json
+
       - run: npm run gen:api
       - run: npm run lint
       - run: npm run build
+
+      - name: Upload security evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-evidence-${{ github.sha }}
+          path: frontend-nasa/evidence/
+          if-no-files-found: warn
+          retention-days: 30
